@@ -20,24 +20,124 @@
         <p class="price py-4">{{if .Params.discount_price}}{{site.Params.currency}}{{.Params.discount_price}}{{else}}{{site.Params.currency}}{{.Params.price}}{{end}}
         {{if .Params.discount_price}}<s class="price">{{site.Params.currency}}{{ .Params.price }}</s>{{end}}
         </p>
-        <button class="snipcart-add-item btn btn-main mb-5" 
-          data-item-id="{{.Title | urlize}}__{{if .Params.discount_price}}{{.Params.discount_price}}{{else}}{{.Params.price}}{{end}}"
-          data-item-name="{{.Title}}"
-          data-item-image="{{range first 1 .Params.Images}}{{. | absURL}}{{end}}"
-          data-item-price="{{if .Params.discount_price}}{{.Params.discount_price}}{{else}}{{.Params.price}}{{end}}" data-item-url="{{.Permalink}}" 
-          {{ if .Params.colors }}
-          data-item-custom1-name="Choose Color"
-          data-item-custom1-options="{{range $index, $element:= .Params.colors}}{{ if eq $index 0 }}{{. | title}}{{ else }}|{{. | title }}{{end}}{{end}}"
-          {{ end }}
-          {{ if .Params.sizes }}
-          data-item-custom2-name="Choose Size"
-          data-item-custom2-options="{{range $index, $element:= .Params.sizes}}{{if eq $index 0}}{{. | title}}{{else}}|{{. | title}}{{end}}{{end}}"
-          {{end}}>{{i18n "add_to_cart"}}
-        </button>
+        <a id="order_now_btn" class="btn btn-main mb-5" onclick="fetchProduct({{ .Params.id }})">
+          Checkout
+        </a>
         <div class="content">{{.Content}}</div>
       </div>
     </div>
   </div>
+
+  <div class="modal fade" id="place_order" aria-hidden="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Checkout</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body" id="checkout-body"></div>
+      </div>
+    </div>
+  </div>
 </section>
+
+<script>
+  function fetchProduct(productId) {
+    // document.getElementById('place_order_btn').disabled = true;
+    $("#place_order").modal();
+
+    let pld = {
+        'query': '{ product(productId: "' + productId + '") { id name slug description sku stock maxItemPerOrder price images attributes { id name values } } }'
+    };
+
+    sendRequest(pld, function (data) {
+       let product = data.data.product;
+       console.log(product);
+
+       let modalBody = `<div class="row form-row">
+            <div class="col-12">
+              <div class="form-group">
+                <label>Quantity</label>
+                <input type="number" id="quantity" name="quantity" class="form-control" required>
+              </div>
+            </div>
+          </div>`;
+
+        modalBody += `<div class="row form-row">`;
+
+       let len = product.attributes.length;
+       let attributes = product.attributes;
+       for (let i = 0; i < len; i++) {
+           let options = '';
+           let valueLen = attributes[i].values.length;
+           let values = attributes[i].values;
+           for (let j = 0; j < valueLen; j++) {
+               options += `<option class="form-control" value="`+ values[j] +`">`+ values[j] +`</option>`;
+           }
+
+           modalBody += `
+            <div class="col-6">
+              <div class="form-group">
+                <label>`+ attributes[i].name +`</label>
+                <select name="`+ attributes[i].name +`" class="form-control" required onchange="onValueChange(event)">`+ options +`</select>
+              </div>
+            </div>`;
+       };
+       modalBody += `</div>`;
+
+       let locationPld = {
+           'query': 'query { locations { id name shortCode }}'
+       };
+       sendRequest(locationPld, function (data) {
+           let len = data.data.locations.length;
+           let locations = data.data.locations;
+           let options = '';
+           for (let i = 0; i < len; i++) {
+               options += `<option class="form-control" value="`+ locations[i].id +`">`+ locations[i].name +`</option>`;
+           };
+
+           modalBody += `<div class="row form-row">
+            <div class="col-12">
+              <div class="form-group">
+                <label>Location</label>
+                <select class="form-control" required onchange="onValueChange(event)">`+ options +`</select>
+              </div>
+            </div>
+          </div>`;
+
+           modalBody += `<button id="place_order_btn" class="btn btn-primary btn-block">Place Order</button>`;
+           document.getElementById('checkout-body').innerHTML = modalBody;
+       }, function (err) {
+           console.log(err);
+       })
+    }, function (err) {
+        console.log(err);
+    });
+  }
+
+  function sendRequest(pld, cb, cbErr) {
+      $.ajax({
+          type: 'POST',
+          url: 'https://api.livemart.xyz/query',
+          headers: {
+              'store-key': '12d9452077e54349a0db5f9fe787811479e97d488b13451dbbabe0df9d986f2263a14fd6294f443190e9589bc6998fd9',
+              'store-secret': '9aeeb27abb0440c5ac37c06703dec102b7ebae30dfa549c78e48fd106c0f00ac'
+          },
+          data: JSON.stringify(pld),
+          dataType: 'json',
+          contentType: 'application/json'
+      }).
+      done(cb).
+      fail(cbErr);
+  }
+
+  function onValueChange(event) {
+      console.log(event.target.name);
+      console.log(event.target.value);
+  }
+</script>
 
 {{ end }}

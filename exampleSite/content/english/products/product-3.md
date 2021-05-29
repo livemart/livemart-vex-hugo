@@ -1,5 +1,6 @@
 ---
 title: "Xiaomi Watch"
+id: "48fa4ced-69e9-409d-a40c-f79940b82ec2"
 date: 2019-10-17T11:22:16+06:00
 images: 
   - "images/showcase/showcase-3.png"
