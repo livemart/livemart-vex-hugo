@@ -372,14 +372,16 @@
   }
 
   function sendRequest(pld, cb, cbErr) {
+    let key = "{{site.Params.livemart_key}}";
+    let secret = "{{site.Params.livemart_secret}}";
     let accessToken = localStorage.getItem('access-token');
 
     $.ajax({
       type: 'POST',
       url: 'https://api.livemart.xyz/query',
       headers: {
-        'store-key': '12d9452077e54349a0db5f9fe787811479e97d488b13451dbbabe0df9d986f2263a14fd6294f443190e9589bc6998fd9',
-        'store-secret': '9aeeb27abb0440c5ac37c06703dec102b7ebae30dfa549c78e48fd106c0f00ac',
+        'store-key': key,
+        'store-secret': secret,
         'access-token': accessToken
       },
       data: JSON.stringify(pld),

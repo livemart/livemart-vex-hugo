@@ -1,6 +1,6 @@
 ################################### Default Configuration ############################
-baseurl = "http://examplesite.com/"
-title = "Vex | hugo landing page template"
+baseurl = "https://demo-hugo.livemart.xyz/"
+title = "LiveMart Vex | hugo landing page template"
 theme = "livemart-vex-hugo"
 # post excert
 summarylength = "20"
@@ -34,9 +34,6 @@ link = "plugins/jquery/jquery.js"
 link = "plugins/bootstrap/bootstrap.min.js"
 [[params.plugins.js]]
 link = "plugins/slick/slick.min.js"
-[[params.plugins.js]]
-link = "https://cdn.snipcart.com/themes/v3.0.27/default/snipcart.js"
-
 
 ###################################### Navigation ######################################
 
@@ -95,13 +92,14 @@ logo = "images/logo.png"
 logo_width = "100px"
 # Meta data
 description = "This is meta description"
-author = "Themefisher"
+author = "LiveMart"
 # currency
 currency = "$"
 # contact form action
 contact_form_action = "#" # contact form works with https://formspree.io
-# snipcart public api key
-snipcart_api = "ZDgxY2ZiM2EtMWRmMi00M2ZkLWI1MDAtNzA2MDc0Y2Q1MzJlNjM3MTAzNDIwOTQ1NDA4NjM4"
+# livemart public api key
+livemart_key = "12d9452077e54349a0db5f9fe787811479e97d488b13451dbbabe0df9d986f2263a14fd6294f443190e9589bc6998fd9"
+livemart_secret = "9aeeb27abb0440c5ac37c06703dec102b7ebae30dfa549c78e48fd106c0f00ac"
 
 # Preloader
 [params.preloader]
@@ -111,8 +109,8 @@ preloader = "" # use .png , .svg or .gif format
 # Subscription
 [params.subscription]
 # mailchimp subsciption
-mailchimp_form_action = "https://gmail.us4.list-manage.com/subscribe/post?u=463ee871f45d2d93748e77cad&amp;id=a0a2c6d074" # replace this url with yours
-mailchimp_form_name = "b_463ee871f45d2d93748e77cad_a0a2c6d074" # replace this code with yours
+mailchimp_form_action = "" # replace this url with yours
+mailchimp_form_name = "" # replace this code with yours
 
 
 ################################### English language #####################################
@@ -122,7 +120,7 @@ languageCode = "en-us"
 contentDir = "content/english"
 weight = 1
 # copyright
-copyright = "Designed By [Themefisher](https://themefisher.com/) & Developed By [Gethugothemes](https://gethugothemes.com/)"
+copyright = "Copyright © [LiveMart](https://livemart.xyz/) | Designed By [Themefisher](https://themefisher.com/)"
 
 
 ################################### French language #####################################
@@ -132,4 +130,4 @@ languageCode = "fr-fr"
 contentDir = "content/french"
 weight = 2
 # copyright
-copyright = "Designed By [Themefisher](https://themefisher.com/) & Developed By [Gethugothemes](https://gethugothemes.com/)"
+copyright = "Copyright © [LiveMart](https://livemart.xyz/) | Designed By [Themefisher](https://themefisher.com/)"
