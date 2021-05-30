@@ -1,5 +1,6 @@
 ################################### Default Configuration ############################
-baseurl = "https://demo-hugo.livemart.xyz/"
+baseurl = "https://demo-hugo.livemart.xyz"
+appendPort = false
 title = "LiveMart Vex | hugo landing page template"
 theme = "livemart-vex-hugo"
 # post excert
