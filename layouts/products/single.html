@@ -42,11 +42,157 @@
       </div>
     </div>
   </div>
+
+  <div class="modal fade" id="user_register" aria-hidden="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Register</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="row form-row">
+            <div class="col-6">
+              <div class="form-group">
+                <label>First Name</label>
+                <input type="text" id="u_first_name" name="u_first_name" class="form-control" required>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label>Last Name</label>
+                <input type="text" id="u_last_name" name="u_last_name" class="form-control" required>
+              </div>
+            </div>
+          </div>
+          <div class="row form-row">
+            <div class="col-12">
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="u_email" name="u_email" class="form-control" required>
+              </div>
+            </div>
+          </div>
+          <div class="row form-row">
+            <div class="col-12">
+              <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="u_password" name="u_password" class="form-control" required>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-block" onclick="onRegister()">Register</button>
+          <a onclick="showLogin()">Have an account? Login</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="user_login" aria-hidden="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Login</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="row form-row">
+            <div class="col-12">
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="l_email" name="l_email" class="form-control" required>
+              </div>
+            </div>
+          </div>
+          <div class="row form-row">
+            <div class="col-12">
+              <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="l_password" name="l_password" class="form-control" required>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-block" onclick="onLogin()">Login</button>
+          <a onclick="showRegister()">Haven't an account? Register</a>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
+<script src="https://js.stripe.com/v3/"></script>
+
 <script>
+  function showLogin() {
+    $("#user_register").modal('hide');
+    $("#user_login").modal('show');
+  }
+
+  function showRegister() {
+    $("#user_register").modal('show');
+    $("#user_login").modal('hide');
+  }
+
+  function onRegister() {
+    document.getElementById('user_register').disabled = true;
+
+    let firstName = document.getElementById('u_first_name').value;
+    let lastName = document.getElementById('u_last_name').value;
+    let email = document.getElementById('u_email').value;
+    let password = document.getElementById('u_password').value;
+    let pld = {
+      'query': `mutation { customerRegister(params: { firstName: "`+ firstName +`" lastName: "`+ lastName +`" email: "`+ email +`" password: "`+ password +`" }) { accessToken } }`
+    };
+
+    sendRequest(pld, function (data) {
+      let accessToken = data.data.customerRegister.accessToken;
+      localStorage.setItem('access-token', accessToken);
+      let productId = JSON.parse(localStorage.getItem('pld')).productId;
+      $("#user_register").modal('hide');
+      fetchProduct(productId);
+    }, function (err) {
+      console.log(err);
+    });
+  }
+
+  function onLogin() {
+    document.getElementById('user_login').disabled = true;
+
+    let email = document.getElementById('l_email').value;
+    let password = document.getElementById('l_password').value;
+    let pld = {
+      'query': `mutation { customerLogin(params: { email: "` + email + `" password: "` + password + `" }) { accessToken } }`
+    };
+
+    sendRequest(pld, function (data) {
+      let accessToken = data.data.customerLogin.accessToken;
+      localStorage.setItem('access-token', accessToken);
+      let productId = JSON.parse(localStorage.getItem('pld')).productId;
+      $("#user_login").modal('hide');
+      fetchProduct(productId);
+    }, function (err) {
+      console.log(err);
+    });
+  }
+
   function fetchProduct(productId) {
-    // document.getElementById('place_order_btn').disabled = true;
+    localStorage.setItem('pld', JSON.stringify({
+      'productId': productId
+    }));
+
+    if (localStorage.getItem('access-token') === null) {
+      $("#user_register").modal();
+      return
+    }
+
     $("#place_order").modal();
 
     let pld = {
@@ -82,7 +228,7 @@
             <div class="col-6">
               <div class="form-group">
                 <label>`+ attributes[i].name +`</label>
-                <select name="`+ attributes[i].name +`" class="form-control" required onchange="onValueChange(event)">`+ options +`</select>
+                <select name="`+ attributes[i].id +`" class="form-control" required onchange="onChangeAttribute(event)">`+ options +`</select>
               </div>
             </div>`;
        };
@@ -102,13 +248,43 @@
            modalBody += `<div class="row form-row">
             <div class="col-12">
               <div class="form-group">
-                <label>Location</label>
-                <select class="form-control" required onchange="onValueChange(event)">`+ options +`</select>
+                <label>Shipping Street</label>
+                <input type="text" id="street" name="street" class="form-control" required>
               </div>
             </div>
           </div>`;
 
-           modalBody += `<button id="place_order_btn" class="btn btn-primary btn-block">Place Order</button>`;
+         modalBody += `<div class="row form-row">
+            <div class="col-6">
+              <div class="form-group">
+                <label>Shipping City</label>
+                <input type="text" id="city" name="city" class="form-control" required>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label>Shipping State</label>
+                <input type="text" id="state" name="state" class="form-control">
+              </div>
+            </div>
+          </div>`;
+
+           modalBody += `<div class="row form-row">
+            <div class="col-6">
+              <div class="form-group">
+                <label>Shipping Postcode</label>
+                <input type="text" id="postcode" name="postcode" class="form-control" required>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label>Shipping Location</label>
+                <select id="location" name="location" class="form-control" required>`+ options +`</select>
+              </div>
+            </div>
+          </div>`;
+
+           modalBody += `<button id="place_order_btn" class="btn btn-primary btn-block" onclick="onPlaceOrder()">Place Order</button>`;
            document.getElementById('checkout-body').innerHTML = modalBody;
        }, function (err) {
            console.log(err);
@@ -118,25 +294,100 @@
     });
   }
 
-  function sendRequest(pld, cb, cbErr) {
-      $.ajax({
-          type: 'POST',
-          url: 'https://api.livemart.xyz/query',
-          headers: {
-              'store-key': '12d9452077e54349a0db5f9fe787811479e97d488b13451dbbabe0df9d986f2263a14fd6294f443190e9589bc6998fd9',
-              'store-secret': '9aeeb27abb0440c5ac37c06703dec102b7ebae30dfa549c78e48fd106c0f00ac'
-          },
-          data: JSON.stringify(pld),
-          dataType: 'json',
-          contentType: 'application/json'
-      }).
-      done(cb).
-      fail(cbErr);
+  function onPlaceOrder() {
+    document.getElementById('place_order_btn').disabled = true;
+
+    let quantity = Number(document.getElementById('quantity').value);
+    let street = document.getElementById('street').value;
+    let city = document.getElementById('city').value;
+    let state = document.getElementById('state').value;
+    let postcode = document.getElementById('postcode').value;
+    let location = document.getElementById('location').value;
+
+    let attributesPld = localStorage.getItem('attributes');
+    if (attributesPld !== null) {
+      let attributes = JSON.parse(attributesPld);
+      let attributeKeys = Object.keys(attributes);
+      attributesPld = '';
+      for (let i = 0; i < attributeKeys.length; i++) {
+        let id = attributes[attributeKeys[i]].Id;
+        let attributeSelectedValue = attributes[attributeKeys[i]].attributeSelectedValue;
+        attributesPld += `{ Id: \"`+ id +`\" attributeSelectedValue: \"`+ attributeSelectedValue +`\" }`
+      }
+    }
+
+    let productId = JSON.parse(localStorage.getItem('pld')).productId;
+
+    let pld = {
+      'query': `mutation { newCart(params: { cartItems: { productId: \"`+ productId +`\" quantity: `+ quantity +` productAttributes: [ `+ attributesPld +` ] } }) { id } }`
+    };
+    sendRequest(pld, function (data) {
+      let cartId = data.data.newCart.id;
+      let paymentMethodId = "63b2f538-d4f6-439c-a010-3656e063d7d4"
+      let shippingMethodId = "de74db26-4a7d-4d23-a385-9fbbabe6b053";
+
+      pld = {
+        'query': `mutation { orderCheckout(params: { cartId: "`+ cartId +`" billingAddress: { street: "`+ street +`" city: "`+ city +`" state: "`+ state +`" postcode: "`+ postcode +`" locationId: "`+ location +`" } paymentMethodId: "`+ paymentMethodId +`" shippingAddress: { street: "`+ street +`" city: "`+ city +`" state: "`+ state +`" postcode: "`+ postcode +`" locationId: "`+ location +`" } shippingMethodId: "`+ shippingMethodId +`" }) { id } }`
+      };
+      sendRequest(pld, function (data) {
+        let orderId = data.data.orderCheckout.id;
+        goto_stripe_checkout(orderId);
+      }, function (err) {
+        console.log(err);
+      })
+    }, function (err) {
+        console.log(err);
+    });
   }
 
-  function onValueChange(event) {
+  function onChangeAttribute(event) {
       console.log(event.target.name);
       console.log(event.target.value);
+
+      let pld = localStorage.getItem('attributes');
+      let attributes = {};
+      if (pld !== null){
+        attributes = JSON.parse(pld);
+      }
+
+      attributes[event.target.name] = {
+        'Id': event.target.name,
+        'attributeSelectedValue': event.target.value
+      };
+      localStorage.setItem('attributes', JSON.stringify(attributes));
+  }
+
+  function goto_stripe_checkout(orderId) {
+    let pld = {
+      'query': `mutation { orderGeneratePaymentNonce(orderId: "`+ orderId +`") { StripePublishableKey Nonce PaymentGatewayName } }`
+    };
+    sendRequest(pld, function (data) {
+      let nonce = data.data.orderGeneratePaymentNonce.Nonce;
+      let stripePublishableKey = data.data.orderGeneratePaymentNonce.StripePublishableKey;
+      let s = Stripe(stripePublishableKey);
+      s.redirectToCheckout({ sessionId: nonce });
+    },function (err) {
+      console.log(err);
+    });
+  }
+
+  function sendRequest(pld, cb, cbErr) {
+    let accessToken = localStorage.getItem('access-token');
+
+    $.ajax({
+      type: 'POST',
+      url: 'https://api.livemart.xyz/query',
+      headers: {
+        'store-key': '12d9452077e54349a0db5f9fe787811479e97d488b13451dbbabe0df9d986f2263a14fd6294f443190e9589bc6998fd9',
+        'store-secret': '9aeeb27abb0440c5ac37c06703dec102b7ebae30dfa549c78e48fd106c0f00ac',
+        'access-token': accessToken
+      },
+      data: JSON.stringify(pld),
+      dataType: 'json',
+      contentType: 'application/json'
+    }).
+    done(cb).
+    fail(cbErr);
   }
 </script>
 
