@@ -6,3 +6,4 @@ services:
     ports:
       - 1313:1313
     command: [ "hugo", "server", "--themesDir", "../..", "--baseUrl=https://demo-hugo.livemart.xyz", "--appendPort=false" ]
+    working_dir: "/root/projects/livemart-vex-hugo/exampleSite"
