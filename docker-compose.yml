@@ -5,3 +5,4 @@ services:
     image: livemart-vex-hugo:latest
     ports:
       - 1313:1313
+    command: [ "hugo", "server", "--themesDir", "../..", "--baseUrl=https://demo-hugo.livemart.xyz", "--appendPort=false" ]

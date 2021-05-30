@@ -1,5 +1,5 @@
 ################################### Default Configuration ############################
-baseurl = "http://localhost"
+baseurl = "https://demo-hugo.livemart.xyz"
 # appendPort = false
 title = "LiveMart Vex | hugo landing page template"
 theme = "livemart-vex-hugo"
