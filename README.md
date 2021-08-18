@@ -39,7 +39,7 @@ Here comes the last step . Go to your [netlify](https://bit.ly/netlify-account) 
 |---|---|---|---|
 | ![Homepage](https://user-images.githubusercontent.com/58769763/87217772-ba70e080-c36e-11ea-8b7d-a0cf98191e84.png) | ![Blog](https://user-images.githubusercontent.com/58769763/87217775-be046780-c36e-11ea-8e10-acb45e54beaa.png) | ![product](https://user-images.githubusercontent.com/58769763/87217776-bfce2b00-c36e-11ea-891a-6f3157c35311.png) | ![contact](https://user-images.githubusercontent.com/58769763/87217777-c197ee80-c36e-11ea-8bd4-8b513cdebe78.png) |
 
-[Live Demo](https://demo-hugo.livemart.xyz).
+[Live Demo](https://demo-vex-hugo.livemart.xyz).
 
 **The images are only for demonstration purpose, Please don't use those images.**
 

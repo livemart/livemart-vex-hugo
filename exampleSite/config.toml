@@ -105,8 +105,8 @@ currency = "$"
 # contact form action
 contact_form_action = "#" # contact form works with https://formspree.io
 # livemart public api key
-livemart_key = "3a7ee39f530a4642b00233ee8707be7927b3b9175b3e4a949acba2709c46649a7c84379d890e4d07b1b32e69e2f1f76b"
-livemart_secret = "5b9013d2e10f43c7b5aa0b98ddea647a839f4c34cb4941c4b0f892dd508af475"
+livemart_key = ""
+livemart_secret = ""
 
 # Preloader
 [params.preloader]
