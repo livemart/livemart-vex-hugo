@@ -1,6 +1,6 @@
 ---
 title: "Oppo Watch"
-id: "a52cf0a0-022f-4acb-bcc1-f8b75f59b683"
+id: "990ffcc6-3d1e-44a5-949d-67e3e0056caa"
 date: 2019-10-17T11:22:16+06:00
 images: 
   - "images/showcase/showcase-8.png"

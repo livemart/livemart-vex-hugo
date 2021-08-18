@@ -1,6 +1,6 @@
 ---
 title: "OnePlus Watch"
-id: "a52cf0a0-022f-4acb-bcc1-f8b75f59b683"
+id: "f944d1ba-45b5-47cb-b08c-5bbfdbf77cc8"
 date: 2019-10-17T11:22:16+06:00
 images: 
   - "images/showcase/showcase-7.png"

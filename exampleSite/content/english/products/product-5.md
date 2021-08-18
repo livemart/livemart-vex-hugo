@@ -1,6 +1,6 @@
 ---
 title: "Redmi Watch"
-id: "48fa4ced-69e9-409d-a40c-f79940b82ec2"
+id: "5587e2eb-f5e5-46ed-aae2-bdf69597b8b7"
 date: 2019-10-17T11:22:16+06:00
 image: "images/showcase/showcase-5.png"
 images: 

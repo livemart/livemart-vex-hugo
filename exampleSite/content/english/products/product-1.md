@@ -1,6 +1,6 @@
 ---
 title: "Apple Watch"
-id: "48fa4ced-69e9-409d-a40c-f79940b82ec2"
+id: "192200e3-f267-41d8-9262-b5b0686cca88"
 date: 2019-10-17T11:22:16+06:00
 images: 
   - "images/showcase/showcase-1.png"

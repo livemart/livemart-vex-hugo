@@ -1,6 +1,6 @@
 ---
 title: "Galaxy Watch"
-id: "a52cf0a0-022f-4acb-bcc1-f8b75f59b683"
+id: "1290074c-61c1-4ce3-a524-2c77b0176d96"
 date: 2019-10-17T11:22:16+06:00
 images: 
   - "images/showcase/showcase-2.png"

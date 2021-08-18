@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LiveMart Checkout</title>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="js/livemart_checkout.js"></script>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/fontawesome.min.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/fontawesome.min.css">
+</head>
+<body style="margin: 5px">
+
+<button class="btn btn-primary" onclick="add_to_cart('82807ad6-f4f2-4443-a8a4-0840dfdd4623')">Add Item 1</button>
+<button class="btn btn-primary" onclick="add_to_cart('f944d1ba-45b5-47cb-b08c-5bbfdbf77cc8')">Add Item 2</button>
+<button class="btn btn-primary" onclick="on_show_cart()">Show Cart</button>
+
+<script>
+    function on_load() {
+        set_store_key('3a7ee39f530a4642b00233ee8707be7927b3b9175b3e4a949acba2709c46649a7c84379d890e4d07b1b32e69e2f1f76b');
+        set_store_secret('5b9013d2e10f43c7b5aa0b98ddea647a839f4c34cb4941c4b0f892dd508af475');
+        get_store_info();
+    }
+
+    function on_show_cart() {
+        show_cart();
+    }
+
+    on_load();
+</script>
+</body>
+</html>
