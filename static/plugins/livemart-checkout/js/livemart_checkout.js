@@ -453,23 +453,23 @@ function load_checkout(locations, paymentMethods, shippingMethods) {
                 <table class="table">
                     <tr>
                         <td class="text-info">Subtotal</td>
-                        <td id="subtotal">0.00 BDT</td>
+                        <td id="subtotal">0.00 ${get_currency()}</td>
                     </tr>
                     <tr ${is_shipping_required() === false ? 'hidden' : ''}>
                         <td class="text-info">Shipping Charge</td>
-                        <td id="shipping_charge">0.00 BDT</td>
+                        <td id="shipping_charge">0.00 ${get_currency()}</td>
                     </tr>
                     <tr>
                         <td class="text-info">Payment Fee</td>
-                        <td id="payment_fee">0.00 BDT</td>
+                        <td id="payment_fee">0.00 ${get_currency()}</td>
                     </tr>
                     <tr>
                         <td class="text-info">Discount</td>
-                        <td id="discount">0.00 BDT</td>
+                        <td id="discount">0.00 ${get_currency()}</td>
                     </tr>
                     <tr>
                         <td class="text-primary text-bold">Grand Total</td>
-                        <td id="grand_total" class="text-primary text-bold">0.00 BDT</td>
+                        <td id="grand_total" class="text-primary text-bold">0.00 ${get_currency()}</td>
                     </tr>
                 </table>
             </div><!--end col-->
@@ -1287,7 +1287,7 @@ function onQuantityUp(itemId, stock) {
     }
 
     let priceParam = document.getElementById(`price_${itemId}`).innerText;
-    priceParam = priceParam.split("BDT")[0];
+    priceParam = priceParam.split(`${get_currency()}`)[0];
     priceParam = priceParam.trim();
     let price = Number(priceParam) * 100;
 
@@ -1313,7 +1313,7 @@ function onQuantityDown(itemId) {
     }
 
     let priceParam = document.getElementById(`price_${itemId}`).innerText;
-    priceParam = priceParam.split("BDT")[0];
+    priceParam = priceParam.split(`${get_currency()}`)[0];
     priceParam = priceParam.trim();
     let price = Number(priceParam) * 100;
 
