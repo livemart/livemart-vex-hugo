@@ -1,5 +1,6 @@
 ---
 title: "Realme Watch"
+id: "82807ad6-f4f2-4443-a8a4-0840dfdd4623"
 date: 2019-10-17T11:22:16+06:00
 images: 
   - "images/showcase/showcase-6.png"
