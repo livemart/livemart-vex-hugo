@@ -1,6 +1,6 @@
 ---
 title: "Redmi Watch"
-id: "5587e2eb-f5e5-46ed-aae2-bdf69597b8b7"
+id: "659cd79d-d98b-47c9-8998-65b2b90b5cf4"
 date: 2019-10-17T11:22:16+06:00
 image: "images/showcase/showcase-5.png"
 images: 
@@ -13,8 +13,8 @@ images:
 description : "this is meta description"
 
 # product Price
-price: "30.00"
-discount_price: "25.00"
+price: "50.00"
+discount_price: "45.00"
 
 # product variation
 colors : ["black","white","gray"]

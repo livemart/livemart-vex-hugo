@@ -1,6 +1,6 @@
 ---
 title: "OnePlus Watch"
-id: "f944d1ba-45b5-47cb-b08c-5bbfdbf77cc8"
+id: "536c6c40-9cb6-4fc3-9fb3-545f6ef29172"
 date: 2019-10-17T11:22:16+06:00
 images: 
   - "images/showcase/showcase-7.png"
@@ -12,8 +12,8 @@ images:
 description : "this is meta description"
 
 # product Price
-price: "30.00"
-discount_price: "25.00"
+price: "50.00"
+discount_price: "40.00"
 
 # product variation
 colors : ["black","white","gray"]

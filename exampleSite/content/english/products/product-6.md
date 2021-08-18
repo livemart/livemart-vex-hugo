@@ -1,6 +1,6 @@
 ---
 title: "Realme Watch"
-id: "82807ad6-f4f2-4443-a8a4-0840dfdd4623"
+id: "3b4177e9-de3b-4fdf-8e5e-34d4fe51fb44"
 date: 2019-10-17T11:22:16+06:00
 images: 
   - "images/showcase/showcase-6.png"
@@ -13,7 +13,7 @@ description : "this is meta description"
 
 # product Price
 price: "30.00"
-discount_price: "25.00"
+discount_price: "30.00"
 
 # product variation
 colors : ["black","white","gray"]

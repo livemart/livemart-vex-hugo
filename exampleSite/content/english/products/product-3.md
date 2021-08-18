@@ -1,6 +1,6 @@
 ---
 title: "Xiaomi Watch"
-id: "34551d14-1366-4a8e-b2aa-0178f1b13394"
+id: "3cc957c6-c51f-46bc-b815-11d6749f3530"
 date: 2019-10-17T11:22:16+06:00
 images: 
   - "images/showcase/showcase-3.png"
@@ -13,7 +13,7 @@ description : "this is meta description"
 
 # product Price
 price: "30.00"
-discount_price: "25.00"
+discount_price: "26.50"
 
 # product variation
 colors : ["black","white","gray"]

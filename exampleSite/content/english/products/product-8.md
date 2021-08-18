@@ -1,6 +1,6 @@
 ---
 title: "Oppo Watch"
-id: "990ffcc6-3d1e-44a5-949d-67e3e0056caa"
+id: "293fcfc4-f651-4028-b687-5bde297d2559"
 date: 2019-10-17T11:22:16+06:00
 images: 
   - "images/showcase/showcase-8.png"
@@ -12,8 +12,8 @@ images:
 description : "this is meta description"
 
 # product Price
-price: "30.00"
-discount_price: "25.00"
+price: "15.00"
+discount_price: "15.00"
 
 # product variation
 colors : ["black","white","gray"]

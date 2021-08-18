@@ -1,6 +1,6 @@
 ---
 title: "Motorola Watch"
-id: "192200e3-f267-41d8-9262-b5b0686cca88"
+id: "449750bb-4374-46a9-95e4-a415e74a2e9a"
 date: 2019-10-17T11:22:16+06:00
 images: 
   - "images/showcase/showcase-4.png"
@@ -12,8 +12,8 @@ images:
 description : "this is meta description"
 
 # product Price
-price: "30.00"
-discount_price: "25.00"
+price: "50.00"
+discount_price: "45.00"
 
 # product variation
 colors : ["black","white","gray"]
