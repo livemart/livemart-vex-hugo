@@ -6,7 +6,7 @@ This is a customzied version of Vex theme for Hugo developed by Themefisher.
 First we will fork this [livemart vex hugo](https://github.com/livemart/livemart-vex-hugo) template.
 
 ### Step 2 : Goto LiveMart & Prepare your account
-Go to [LiveMart](https://livemart.xyz) and prepare your account. Here is a [Quick start guide](https://blog.livemart.xyz/quick-start-guide/).
+Go to [LiveMart](https://livemart.xyz) and prepare your account. Here is a [Quick start guide](https://livemart.xyz/contents/blazing-fast-static-ecommerce-site-with-hugo-livemart/).
 Then change `livemart_key` and `livemart_secret` with your `App` type credentials in `exampleSite/config.toml`.
 
 ### Step 3 : Add your repository in Forestry
