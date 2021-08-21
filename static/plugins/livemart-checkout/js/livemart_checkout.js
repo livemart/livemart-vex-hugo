@@ -30,6 +30,10 @@ function get_store_secret() {
 }
 
 function set_customer_access_token(token) {
+    if (token === null) {
+        localStorage.removeItem('livemart_customer_access_token');
+        return
+    }
     localStorage.setItem('livemart_customer_access_token', token);
 }
 
@@ -49,10 +53,99 @@ function get_cart_id() {
     return localStorage.getItem('livemart_cart_id');
 }
 
+function get_product_details(id, successCallback, failureCallback) {
+    let payload = {
+        query: `query { product(productId: "${id}") { id name images attributes { id name values isRequired } } }`
+    }
+    sendRequest(payload, successCallback, failureCallback);
+}
+
 function add_to_cart(itemId) {
+    get_product_details(itemId, function (result) {
+        if (result.data === null) {
+            alert('Failed to get product details');
+            return
+        }
+        set_product_info(result.data.product.id, result.data.product);
+
+        let productName = result.data.product.name;
+        let attributes = result.data.product.attributes;
+        let attributeList = [];
+        if (attributes.length > 0) {
+            let mainDiv = document.createElement('div');
+            let selectDiv = document.createElement('div');
+
+            attributes.forEach(a => {
+                let itemSelect = document.createElement('select');
+                itemSelect.classList.add('form-control', 'mt-1', 'm-1');
+                itemSelect.style = `width: 120px;display: inline`;
+                itemSelect.onchange = function (e) {
+                    on_product_attribute_selected(itemId, a.id, e.target.value);
+                }
+
+                attributeList.push({
+                    id: a.id,
+                    name: a.name,
+                    is_required: a.isRequired,
+                });
+
+                let itemSelectOption = document.createElement('option');
+                itemSelectOption.value = a.name;
+                itemSelectOption.innerText = a.name;
+                itemSelectOption.disabled = true;
+                itemSelectOption.selected = true;
+                itemSelect.appendChild(itemSelectOption);
+
+                a.values.forEach(v => {
+                    let itemSelectOption = document.createElement('option');
+                    itemSelectOption.value = v;
+                    itemSelectOption.innerText = v;
+                    itemSelectOption.selected = get_required_attribute_value(itemId, a.id) === v;
+                    itemSelect.appendChild(itemSelectOption);
+                })
+                selectDiv.appendChild(itemSelect);
+            });
+            mainDiv.appendChild(selectDiv);
+
+            let addToCartWithAttribute = document.createElement('button');
+            addToCartWithAttribute.classList.add('btn', 'btn-primary', 'mt-2');
+            addToCartWithAttribute.innerText = 'Add To Cart';
+            addToCartWithAttribute.onclick = function () {
+                if (check_if_required_attributes_selected(itemId)) {
+                    update_or_initiate_cart(itemId);
+                }
+            }
+            mainDiv.appendChild(addToCartWithAttribute);
+
+            set_required_attributes(itemId, attributeList);
+
+            swal({
+                text: `Choose Attributes for ${productName}`,
+                content: mainDiv,
+                button: false,
+            })
+        } else {
+            update_or_initiate_cart(itemId);
+        }
+    }, function (err) {
+        alert('Failed to send request');
+    });
+}
+
+function update_or_initiate_cart(itemId) {
     if (get_cart_id() === null) {
+        let attributeQuery = ``;
+        let attributes = get_required_attributes(itemId);
+        attributes.forEach(a => {
+            let id = a.id;
+            let selectedValue = get_required_attribute_value(itemId, id);
+            if (selectedValue !== null) {
+                attributeQuery += `{ Id: "${id}" attributeSelectedValue: "${selectedValue}" }`;
+            }
+        });
+
         let payload = {
-            'query': `mutation { newCart(params: { cartItems: { productId: "${itemId}" quantity: 1 } }) { id isShippingRequired } }`
+            'query': `mutation { newCart(params: { cartItems: { productId: "${itemId}" quantity: 1 productAttributes: [ ${attributeQuery} ] } }) { id isShippingRequired } }`
         }
         sendRequest(payload,
             function (result) {
@@ -67,8 +160,18 @@ function add_to_cart(itemId) {
                 alert('Failed to send request');
             });
     } else {
+        let attributeQuery = ``;
+        let attributes = get_required_attributes(itemId);
+        attributes.forEach(a => {
+            let id = a.id;
+            let selectedValue = get_required_attribute_value(itemId, a.id);
+            if (selectedValue !== null) {
+                attributeQuery += `{ Id: "${id}" attributeSelectedValue: "${selectedValue}" }`;
+            }
+        });
+
         let payload = {
-            'query': `mutation { updateCart(id: "${get_cart_id()}" params: { cartItems: { productId: "${itemId}" quantity: 1 } }) { id isShippingRequired } }`
+            'query': `mutation { updateCart(id: "${get_cart_id()}" params: { cartItems: { productId: "${itemId}" quantity: 1 productAttributes: [ ${attributeQuery} ] } }) { id isShippingRequired } }`
         }
         sendRequest(payload,
             function (result) {
@@ -82,6 +185,18 @@ function add_to_cart(itemId) {
                 alert('Failed to send request');
             });
     }
+}
+
+function set_product_info(id, v) {
+    localStorage.setItem(id, JSON.stringify(v));
+}
+
+function get_product_info(id) {
+    let prod = localStorage.getItem(id);
+    if (prod === null) {
+        return null;
+    }
+    return JSON.parse(prod);
 }
 
 function set_cart_item_ids(items) {
@@ -126,6 +241,38 @@ function is_recently_removed_item(id) {
     return false
 }
 
+function set_required_attributes(key, attributes) {
+    localStorage.setItem(`attributes_${key}`, JSON.stringify(attributes));
+}
+
+function get_required_attributes(key) {
+    if (localStorage.getItem(`attributes_${key}`) == null) {
+        return [];
+    }
+    return JSON.parse(localStorage.getItem(`attributes_${key}`));
+}
+
+function set_required_attribute_value(key, attribute, value) {
+    localStorage.setItem(`attributes_${key}_${attribute}`, value);
+}
+
+function get_required_attribute_value(key, attribute) {
+    return localStorage.getItem(`attributes_${key}_${attribute}`);
+}
+
+function check_if_required_attributes_selected(id) {
+    let required_attributes = get_required_attributes(id);
+    for (let i = 0; i < required_attributes.length; i++) {
+        let a = required_attributes[i];
+        let selected_value = get_required_attribute_value(id, a.id);
+        if (selected_value === null && a.is_required) {
+            alert(`Select ${a.name} of ${get_product_info(id).name}`);
+            return false;
+        }
+    }
+    return true;
+}
+
 function update_cart(successCallback, failureCallback) {
     let ids = get_cart_item_ids();
     if (ids === null) {
@@ -137,10 +284,20 @@ function update_cart(successCallback, failureCallback) {
         let quantityParam = document.getElementById(`quantity_${id}`).innerText;
         quantityParam = quantityParam.trim();
         let quantity = Number(quantityParam);
+
         if (is_recently_removed_item(id)) {
             params += `{ productId: "${id}" quantity: 0 }`;
         } else {
-            params += `{ productId: "${id}" quantity: ${quantity} }`;
+            let attributeQuery = ``;
+            let attributes = get_required_attributes(id);
+            attributes.forEach(a => {
+                let selectedValue = get_required_attribute_value(id, a.id);
+                if (selectedValue !== null) {
+                    attributeQuery += `{ Id: "${a.id}" attributeSelectedValue: "${selectedValue}" }`;
+                }
+            })
+
+            params += `{ productId: "${id}" quantity: ${quantity} productAttributes: [ ${attributeQuery} ] }`;
         }
     })
 
@@ -220,6 +377,7 @@ function show_cart() {
 
                 let item = document.createElement('tr');
                 item.id = `tr_${v.product.id}`;
+
                 let itemNameWithImage = document.createElement('td');
                 itemNameWithImage.align = 'left';
                 // Adding Item Image
@@ -235,7 +393,49 @@ function show_cart() {
                 let itemName = document.createElement('b');
                 itemName.innerText = `${v.product.name}`;
                 itemName.style = `font-size: 22px;padding-left: 25px;`;
+
                 itemNameWithImage.appendChild(itemName);
+
+                let attributeList = [];
+                if (v.product.attributes !== null && v.product.attributes.length > 0) {
+                    let selectDiv = document.createElement('div');
+
+                    v.product.attributes.forEach(a => {
+                        let itemSelect = document.createElement('select');
+                        itemSelect.classList.add('form-control', 'mt-1', 'm-1');
+                        itemSelect.style = `width: 120px;display: inline`;
+                        itemSelect.onchange = function (e) {
+                            on_product_attribute_selected(v.product.id, a.id, e.target.value);
+                        }
+
+                        attributeList.push({
+                            id: a.id,
+                            name: a.name,
+                            is_required: a.isRequired,
+                        });
+
+                        let itemSelectOption = document.createElement('option');
+                        itemSelectOption.value = a.name;
+                        itemSelectOption.innerText = a.name;
+                        itemSelectOption.disabled = true;
+                        itemSelectOption.selected = true;
+                        itemSelect.appendChild(itemSelectOption);
+
+                        a.values.forEach(vv => {
+                            let itemSelectOption = document.createElement('option');
+                            itemSelectOption.value = vv;
+                            itemSelectOption.innerText = vv;
+                            itemSelectOption.selected = get_required_attribute_value(v.product.id, a.id) === vv;
+                            itemSelect.appendChild(itemSelectOption);
+                        })
+
+                        selectDiv.appendChild(itemSelect);
+                    });
+
+                    itemNameWithImage.appendChild(selectDiv);
+                }
+
+                set_required_attributes(v.product.id, attributeList);
                 item.appendChild(itemNameWithImage);
 
                 let discount = 0;
@@ -306,17 +506,57 @@ function show_cart() {
 
             list.appendChild(listBody);
 
+            let continueShoppingBtn = document.createElement('button');
+            continueShoppingBtn.classList.add('btn', 'btn-secondary', 'mt-2');
+            continueShoppingBtn.innerText = 'Continue Shopping';
+            continueShoppingBtn.onclick = function () {
+                swal.close();
+            }
+
+            let checkoutBtn = document.createElement('button');
+            checkoutBtn.classList.add('btn', 'btn-primary', 'mt-2');
+            checkoutBtn.innerText = 'Checkout';
+            checkoutBtn.onclick = function () {
+                show_checkout();
+            }
+
+            if (cartItems.length !== 0) {
+                let tableFooter = document.createElement('tfoot');
+                let tr = document.createElement('tr');
+
+                let tdContinue = document.createElement('td');
+                tdContinue.align = 'right';
+                tdContinue.colSpan = 5;
+                tdContinue.appendChild(continueShoppingBtn);
+                let tdCheckout = document.createElement('td');
+                tdCheckout.align = 'right';
+                tdCheckout.colSpan = 1;
+                tdCheckout.appendChild(checkoutBtn);
+
+                tr.appendChild(tdContinue);
+                tr.appendChild(tdCheckout);
+                tableFooter.appendChild(tr);
+                list.appendChild(tableFooter);
+            }
+
             swal({
                 text: 'Cart Summary',
                 content: list,
-                buttons: cartItems.length === 0 ? false : ['Continue Shopping', 'Checkout']
-            }).then(value => {
-                if (value === true) {
-                    show_checkout();
-                }
+                buttons: false
             });
         } else {
             alert('Failed to retrieve cart');
+        }
+    }, function (err) {
+        alert('Failed to send request');
+    })
+}
+
+function on_product_attribute_selected(key, attribute, selected_value) {
+    set_required_attribute_value(key, attribute, selected_value);
+    update_cart(function (result) {
+        if (result.data === null) {
+            alert(result.errors[0].message);
         }
     }, function (err) {
         alert('Failed to send request');
@@ -378,6 +618,11 @@ function show_checkout() {
         if (get_customer_access_token() === null) {
             show_login_form()
             return
+        }
+        for (let i = 0; i < cartItemIds.length; i++) {
+            if (!check_if_required_attributes_selected(cartItemIds[i])) {
+                return;
+            }
         }
 
         set_subtotal(0);
@@ -502,6 +747,14 @@ function load_checkout(locations, paymentMethods, shippingMethods) {
                 <div class="mb-3">
                     <div class="form">
                         <button class="btn btn-primary form-control" id="place_order_btn">Place Order</button>
+                    </div>
+                </div>
+            </div><!--end col-->
+            
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <div class="form">
+                        <button onclick="logout()" class="btn btn-outline-info form-control" id="place_order_btn">Logout</button>
                     </div>
                 </div>
             </div><!--end col-->
@@ -671,6 +924,11 @@ function load_checkout(locations, paymentMethods, shippingMethods) {
     };
 
     set_bills();
+}
+
+function logout() {
+    set_customer_access_token(null);
+    show_login_form();
 }
 
 function place_order() {
@@ -910,7 +1168,8 @@ function check_discount() {
             eleGrandTotal.innerText = `${formatAmount(get_grand_total())} ${get_currency()}`;
             return
         }
-        alert('Coupon is unavailable');
+
+        alert(result.errors[0].message);
     }, function (err) {
         console.log(err);
         alert('Failed to send request');
@@ -1265,7 +1524,7 @@ function onItemRemove(itemId) {
     update_cart(function (result) {
         remove_recently_removed_id(itemId);
 
-        if (result.data.data === null) {
+        if (result.data === null) {
             alert('Failed to update cart');
             return
         }
@@ -1296,7 +1555,7 @@ function onQuantityUp(itemId, stock) {
     document.getElementById(`subtotal_${itemId}`).innerText = `${formatAmount(price * quantity)} ${get_currency()}`;
 
     update_cart(function (result) {
-        if (result.data.data === null) {
+        if (result.data === null) {
             alert(`${result.errors[0].message}`);
         }
     }, function (err) {
@@ -1322,7 +1581,7 @@ function onQuantityDown(itemId) {
     document.getElementById(`subtotal_${itemId}`).innerText = `${formatAmount(price * quantity)} ${get_currency()}`;
 
     update_cart(function (result) {
-        if (result.data.data === null) {
+        if (result.data === null) {
             alert('Failed to update cart');
         }
     }, function (err) {
