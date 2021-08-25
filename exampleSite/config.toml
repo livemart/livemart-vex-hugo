@@ -1,5 +1,5 @@
 ################################### Default Configuration ############################
-baseurl = "https://demo-hugo.livemart.xyz"
+baseurl = "https://demo-hugo.livemart.store"
 # appendPort = false
 title = "LiveMart Vex | hugo landing page template"
 theme = "livemart-vex-hugo"
@@ -25,10 +25,6 @@ link = "plugins/bootstrap/bootstrap.min.css"
 link = "plugins/themefisher-font/themefisher-font.min.css"
 [[params.plugins.css]]
 link = "plugins/slick/slick.min.css"
-[[params.plugins.css]]
-link = "plugins/livemart-checkout/css/style.css"
-[[params.plugins.css]]
-link = "plugins/livemart-checkout/css/fontawesome.min.css"
 
 # JS Plugins
 [[params.plugins.js]]
@@ -37,10 +33,6 @@ link = "plugins/jquery/jquery.js"
 link = "plugins/bootstrap/bootstrap.min.js"
 [[params.plugins.js]]
 link = "plugins/slick/slick.min.js"
-[[params.plugins.js]]
-link = "plugins/livemart-checkout/js/livemart_checkout.js"
-[[params.plugins.js]]
-link = "plugins/livemart-checkout/js/fontawesome.min.js"
 
 ###################################### Navigation ######################################
 
@@ -127,7 +119,7 @@ languageCode = "en-us"
 contentDir = "content/english"
 weight = 1
 # copyright
-copyright = "Copyright © [LiveMart](https://livemart.xyz/) | Designed By [Themefisher](https://themefisher.com/)"
+copyright = "Copyright © [LiveMart](https://livemart.store/)"
 
 ################################### French language #####################################
 [Languages.fr]
@@ -136,4 +128,4 @@ languageCode = "fr-fr"
 contentDir = "content/french"
 weight = 2
 # copyright
-copyright = "Copyright © [LiveMart](https://livemart.xyz/) | Designed By [Themefisher](https://themefisher.com/)"
+copyright = "Copyright © [LiveMart](https://livemart.store/)"
